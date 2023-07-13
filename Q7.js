@@ -1,50 +1,34 @@
-function decodeString(s) {
-	const stack = [];
+function findPermutations(S) {
+  const permutations = [];
 
-	for (let i = 0; i < s.length; i++) {
-		let currentChar = s[i];
+  // Convert the string into an array for easier swapping
+  const arr = S.split("");
 
-		if (isDigit(currentChar)) {
-			let count = 0;
-			while (isDigit(s[i])) {
-				count = count * 10 + parseInt(s[i]);
-				i++;
-			}
-			i--;
+  // Generate permutations recursively
+  permute(arr, 0, permutations);
 
-			stack.push(count);
-		} else if (currentChar === '[') {
-			stack.push('');
-		} else if (currentChar === ']') {
-			let encodedStr = stack.pop();
-			let count = stack.pop();
-			let repeatedStr = repeatString(encodedStr, count);
-
-			if (stack.length > 0) {
-				stack[stack.length - 1] += repeatedStr;
-			} else {
-				stack.push(repeatedStr);
-			}
-		} else {
-			if (stack.length > 0) {
-				stack[stack.length - 1] += currentChar;
-			} else {
-				stack.push(currentChar);
-			}
-		}
-	}
-
-	return stack.pop();
+  return permutations;
 }
 
-function isDigit(char) {
-	return /[0-9]/.test(char);
+function permute(arr, start, permutations) {
+  if (start === arr.length - 1) {
+    // Base case: reached the last character, add the current permutation to the result
+    permutations.push(arr.join(""));
+    return;
+  }
+
+  for (let i = start; i < arr.length; i++) {
+		
+    swap(arr, start, i);
+
+    permute(arr, start + 1, permutations);
+
+    swap(arr, start, i);
+  }
 }
 
-function repeatString(str, count) {
-	let repeatedStr = '';
-	for (let i = 0; i < count; i++) {
-		repeatedStr += str;
-	}
-	return repeatedStr;
+function swap(arr, i, j) {
+  const temp = arr[i];
+  arr[i] = arr[j];
+  arr[j] = temp;
 }
